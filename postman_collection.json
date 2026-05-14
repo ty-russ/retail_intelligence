@@ -1,0 +1,2567 @@
+{
+  "info": {
+    "_postman_id": "4481ab7f-0362-4967-b33d-e20b40aa5f52",
+    "name": "Retail Insight — Order Cancellation Intelligence API",
+    "description": "Full API surface for the Retail Insight backend: analytics endpoints that drive the dashboard surfaces, plus AI-backed endpoints for the multi-LLM chat, narrator, recommender, and suggestion generator.\n\nAll analytics endpoints share five common query parameters — `stores`, `regions`, `date_from`, `date_to`, `reasons` — which are wired into the Postman parameter UI of every request (disabled by default; tick to enable). The `base_url` collection variable defaults to `http://localhost:8000`; override it in environments for staging/prod.\n\nEvery request has a sample 200 OK response drawn from the real workbook shape, so the schemas are visible without making a live call.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string",
+      "description": "FastAPI backend root URL. Override in environments."
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Service",
+      "item": [
+        {
+          "name": "Root / Service info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [],
+              "query": []
+            },
+            "description": "Returns service metadata, version, and the top-level endpoint map."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [],
+                  "query": []
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"service\": \"Retail Insight Cancellation Intelligence API\",\n  \"version\": \"1.0.0\",\n  \"docs\": \"/docs\",\n  \"endpoints\": {\n    \"analytics\": \"/api/analytics/\",\n    \"insights\": \"/api/insights/\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ],
+              "query": []
+            },
+            "description": "Lightweight liveness check."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/health",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "health"
+                  ],
+                  "query": []
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"ok\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "description": "All endpoints accept the same filter query params. Click any request and toggle them on in the Params tab.",
+      "item": [
+        {
+          "name": "Filter options",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/filters",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "filters"
+              ],
+              "query": []
+            },
+            "description": "Available filter values (stores, reasons, full date range) for populating sidebar pickers."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/filters",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "filters"
+                  ],
+                  "query": []
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"stores\": [\n    {\n      \"STORE_NUM\": 12,\n      \"CITY\": \"Mountainview\",\n      \"STATE\": \"IL\",\n      \"REGION\": 8\n    },\n    {\n      \"STORE_NUM\": 61,\n      \"CITY\": \"Wedington\",\n      \"STATE\": \"TN\",\n      \"REGION\": 19\n    },\n    {\n      \"STORE_NUM\": 133,\n      \"CITY\": \"Clinton\",\n      \"STATE\": \"IA\",\n      \"REGION\": 5\n    },\n    {\n      \"STORE_NUM\": 1426,\n      \"CITY\": \"Alpine\",\n      \"STATE\": \"IL\",\n      \"REGION\": 8\n    }\n  ],\n  \"reasons\": [\n    \"911 Emergency Cancellation\",\n    \"Customer Cancellation\",\n    \"Expired\",\n    \"Fraud Cancellation\",\n    \"Out Of Stock\",\n    \"Rejected Substitute\"\n  ],\n  \"date_range\": {\n    \"from\": \"2024-02-01\",\n    \"to\": \"2024-06-23\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Overview / KPIs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/overview?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "overview"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Headline metrics: order/cancel units, rates, revenue at risk."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/overview?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "overview"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"total_order_units\": 141213.0,\n  \"total_cancel_units\": 8245.0,\n  \"cancel_rate_units\": 5.84,\n  \"total_order_revenue\": 374923.4,\n  \"total_cancel_revenue\": 22501.18,\n  \"cancel_rate_revenue\": 6.0\n}"
+            }
+          ]
+        },
+        {
+          "name": "Weekly trend",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/trends/weekly?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "trends",
+                "weekly"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Per-week cancelled units + revenue at risk for the time-series chart."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/trends/weekly?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "trends",
+                    "weekly"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"order_week\": \"2024-02-05/2024-02-11\",\n    \"cancel_qty\": 380,\n    \"cancel_amt\": 1024.5\n  },\n  {\n    \"order_week\": \"2024-02-12/2024-02-18\",\n    \"cancel_qty\": 412,\n    \"cancel_amt\": 1170.3\n  },\n  {\n    \"order_week\": \"2024-06-03/2024-06-09\",\n    \"cancel_qty\": 891,\n    \"cancel_amt\": 2548.6\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Day-of-week pattern",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/trends/dow?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "trends",
+                "dow"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Cancellations summed by order day-of-week (Mon → Sun)."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/trends/dow?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "trends",
+                    "dow"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"day\": \"Monday\",\n    \"cancel_qty\": 1180\n  },\n  {\n    \"day\": \"Tuesday\",\n    \"cancel_qty\": 1095\n  },\n  {\n    \"day\": \"Wednesday\",\n    \"cancel_qty\": 1140\n  },\n  {\n    \"day\": \"Thursday\",\n    \"cancel_qty\": 1162\n  },\n  {\n    \"day\": \"Friday\",\n    \"cancel_qty\": 1284\n  },\n  {\n    \"day\": \"Saturday\",\n    \"cancel_qty\": 1232\n  },\n  {\n    \"day\": \"Sunday\",\n    \"cancel_qty\": 1152\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Store breakdown",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/stores?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "stores"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Per-store cancel rate + qty + revenue, sorted by rate desc."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/stores?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "stores"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"STORE_NUM\": 1426,\n    \"CITY\": \"Alpine\",\n    \"STATE\": \"IL\",\n    \"REGION\": 8,\n    \"cancel_qty\": 1878,\n    \"cancel_amt\": 5942.3,\n    \"order_qty\": 19720,\n    \"cancel_rate\": 9.52\n  },\n  {\n    \"STORE_NUM\": 133,\n    \"CITY\": \"Clinton\",\n    \"STATE\": \"IA\",\n    \"REGION\": 5,\n    \"cancel_qty\": 1878,\n    \"cancel_amt\": 4503.5,\n    \"order_qty\": 32863,\n    \"cancel_rate\": 5.71\n  },\n  {\n    \"STORE_NUM\": 61,\n    \"CITY\": \"Wedington\",\n    \"STATE\": \"TN\",\n    \"REGION\": 19,\n    \"cancel_qty\": 449,\n    \"cancel_amt\": 1198.2,\n    \"order_qty\": 22496,\n    \"cancel_rate\": 2.0\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Region breakdown",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/regions?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "regions"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Cancellations aggregated to region level (REGION dim from the store table)."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/regions?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "regions"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"REGION\": 8,\n    \"order_qty\": 90243,\n    \"cancel_qty\": 5597,\n    \"cancel_amt\": 16223.45,\n    \"cancel_rate\": 6.2\n  },\n  {\n    \"REGION\": 5,\n    \"order_qty\": 83120,\n    \"cancel_qty\": 4004,\n    \"cancel_amt\": 10115.75,\n    \"cancel_rate\": 4.82\n  },\n  {\n    \"REGION\": 19,\n    \"order_qty\": 51188,\n    \"cancel_qty\": 2221,\n    \"cancel_amt\": 6004.8,\n    \"cancel_rate\": 4.34\n  },\n  {\n    \"REGION\": 12,\n    \"order_qty\": 65150,\n    \"cancel_qty\": 2426,\n    \"cancel_amt\": 6157.2,\n    \"cancel_rate\": 3.72\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "State breakdown",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/states?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "states"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Per-US-state cancel rate, designed for the choropleth surface."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/states?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "states"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"STATE\": \"IL\",\n    \"order_qty\": 90243,\n    \"cancel_qty\": 5597,\n    \"cancel_amt\": 16223.45,\n    \"stores\": 4,\n    \"cancel_rate\": 6.2\n  },\n  {\n    \"STATE\": \"IA\",\n    \"order_qty\": 83120,\n    \"cancel_qty\": 4004,\n    \"cancel_amt\": 10115.75,\n    \"stores\": 4,\n    \"cancel_rate\": 4.82\n  },\n  {\n    \"STATE\": \"TN\",\n    \"order_qty\": 51188,\n    \"cancel_qty\": 2221,\n    \"cancel_amt\": 6004.8,\n    \"stores\": 3,\n    \"cancel_rate\": 4.34\n  },\n  {\n    \"STATE\": \"AR\",\n    \"order_qty\": 65150,\n    \"cancel_qty\": 2426,\n    \"cancel_amt\": 6157.2,\n    \"stores\": 4,\n    \"cancel_rate\": 3.72\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Cancel reasons",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/reasons?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "reasons"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Top parent cancel reasons by volume."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/reasons?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "reasons"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"reason\": \"Out Of Stock\",\n    \"cancel_qty\": 4470\n  },\n  {\n    \"reason\": \"Customer Cancellation\",\n    \"cancel_qty\": 2105\n  },\n  {\n    \"reason\": \"Fraud Cancellation\",\n    \"cancel_qty\": 942\n  },\n  {\n    \"reason\": \"Rejected Substitute\",\n    \"cancel_qty\": 430\n  },\n  {\n    \"reason\": \"Expired\",\n    \"cancel_qty\": 208\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Sub-reasons (with parent)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/reasons/sub?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "reasons",
+                "sub"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Each sub-reason joined to its parent reason, plus a pre-joined `reason_full` label."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/reasons/sub?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "reasons",
+                    "sub"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"reason\": \"Out Of Stock\",\n    \"sub_reason\": \"Item unavailable\",\n    \"reason_full\": \"Out Of Stock — Item unavailable\",\n    \"cancel_qty\": 3214\n  },\n  {\n    \"reason\": \"Out Of Stock\",\n    \"sub_reason\": \"Cannot fulfil\",\n    \"reason_full\": \"Out Of Stock — Cannot fulfil\",\n    \"cancel_qty\": 1256\n  },\n  {\n    \"reason\": \"Customer Cancellation\",\n    \"sub_reason\": \"Changed mind\",\n    \"reason_full\": \"Customer Cancellation — Changed mind\",\n    \"cancel_qty\": 1430\n  },\n  {\n    \"reason\": \"Customer Cancellation\",\n    \"sub_reason\": \"Found at lower price\",\n    \"reason_full\": \"Customer Cancellation — Found at lower price\",\n    \"cancel_qty\": 675\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Order-to-cancel lag",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/cancels/lag?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "cancels",
+                "lag"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Distribution of days between order and cancel. Capped at first 30 buckets."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/cancels/lag?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "cancels",
+                    "lag"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"lag_days\": 0,\n    \"cancel_qty\": 5878\n  },\n  {\n    \"lag_days\": 1,\n    \"cancel_qty\": 840\n  },\n  {\n    \"lag_days\": 2,\n    \"cancel_qty\": 503\n  },\n  {\n    \"lag_days\": 3,\n    \"cancel_qty\": 311\n  },\n  {\n    \"lag_days\": 4,\n    \"cancel_qty\": 220\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Reason × DOW heatmap",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/heatmap/reason-dow?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "heatmap",
+                "reason-dow"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Long-form rows + ordered axis labels for the heatmap surface."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/heatmap/reason-dow?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "heatmap",
+                    "reason-dow"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"rows\": [\n    {\n      \"reason\": \"Out Of Stock\",\n      \"day\": \"Monday\",\n      \"cancel_qty\": 740\n    },\n    {\n      \"reason\": \"Out Of Stock\",\n      \"day\": \"Tuesday\",\n      \"cancel_qty\": 612\n    },\n    {\n      \"reason\": \"Customer Cancellation\",\n      \"day\": \"Friday\",\n      \"cancel_qty\": 380\n    },\n    {\n      \"reason\": \"Customer Cancellation\",\n      \"day\": \"Saturday\",\n      \"cancel_qty\": 411\n    }\n  ],\n  \"reasons\": [\n    \"Out Of Stock\",\n    \"Customer Cancellation\",\n    \"Fraud Cancellation\",\n    \"Rejected Substitute\",\n    \"Expired\"\n  ],\n  \"days\": [\n    \"Monday\",\n    \"Tuesday\",\n    \"Wednesday\",\n    \"Thursday\",\n    \"Friday\",\n    \"Saturday\",\n    \"Sunday\"\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Top products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/products?top_n=20&sort_by=qty",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                },
+                {
+                  "key": "top_n",
+                  "value": "20",
+                  "description": "1..100",
+                  "disabled": false
+                },
+                {
+                  "key": "sort_by",
+                  "value": "qty",
+                  "description": "qty|amt",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Top cancelled products. `sort_by=qty` (default) or `sort_by=amt` for revenue Pareto. `top_n` 1-100 (default 20)."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/products?top_n=20&sort_by=qty",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "products"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    },
+                    {
+                      "key": "top_n",
+                      "value": "20",
+                      "description": "1..100",
+                      "disabled": false
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "qty",
+                      "description": "qty|amt",
+                      "disabled": false
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"ITEM_ID\": 559658594,\n    \"PRODUCT_NAME\": \"Purified Drinking Water, 16.9 fl oz Bottles, 40 Count\",\n    \"DEPARTMENT\": \"BEVERAGES\",\n    \"CATEGORY\": \"NON FLAVORED WATER\",\n    \"cancel_qty\": 4062,\n    \"cancel_amt\": 17359.74\n  },\n  {\n    \"ITEM_ID\": 747738428,\n    \"PRODUCT_NAME\": \"Sparkling Mineral Water Glass Bottles, 12 fl oz\",\n    \"DEPARTMENT\": \"BEVERAGES\",\n    \"CATEGORY\": \"FLAVORED WATER\",\n    \"cancel_qty\": 724,\n    \"cancel_amt\": 9068.6\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Product lifecycle status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/products/status?window_days=30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "products",
+                "status"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                },
+                {
+                  "key": "window_days",
+                  "value": "30",
+                  "description": "New-launch window in days (1..365)",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Cancels split by product lifecycle: discontinued / new launch / established / unknown."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/products/status?window_days=30",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "products",
+                    "status"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    },
+                    {
+                      "key": "window_days",
+                      "value": "30",
+                      "description": "New-launch window in days (1..365)",
+                      "disabled": false
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"summary\": [\n    {\n      \"bucket\": \"established\",\n      \"cancel_qty\": 11965,\n      \"cancel_amt\": 46455.29,\n      \"share_pct\": 84.0\n    },\n    {\n      \"bucket\": \"discontinued\",\n      \"cancel_qty\": 2069,\n      \"cancel_amt\": 9446.01,\n      \"share_pct\": 14.5\n    },\n    {\n      \"bucket\": \"new_launch\",\n      \"cancel_qty\": 214,\n      \"cancel_amt\": 744.09,\n      \"share_pct\": 1.5\n    }\n  ],\n  \"top_discontinued\": [\n    {\n      \"ITEM_ID\": 2493042,\n      \"PRODUCT_NAME\": \"Purified Drinking Water, 28 Count Bottles\",\n      \"DEPARTMENT\": \"BEVERAGES\",\n      \"CATEGORY\": \"NON FLAVORED WATER\",\n      \"cancel_qty\": 432,\n      \"cancel_amt\": 1932.48\n    }\n  ],\n  \"top_new_launch\": [\n    {\n      \"ITEM_ID\": 948091511,\n      \"PRODUCT_NAME\": \"Hydrate Alkaline Water, 23.7 fl oz, 15 Count\",\n      \"DEPARTMENT\": \"BEVERAGES\",\n      \"CATEGORY\": \"FLAVORED WATER\",\n      \"cancel_qty\": 42,\n      \"cancel_amt\": 188.58\n    }\n  ],\n  \"new_launch_window_days\": 30,\n  \"_note\": \"ACTIVE_STATUS is a snapshot at extract time, not a historical reading.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/categories?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Department × category breakdown."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/categories?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "categories"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"DEPARTMENT\": \"BEVERAGES\",\n    \"CATEGORY\": \"NON FLAVORED WATER\",\n    \"cancel_qty\": 4438\n  },\n  {\n    \"DEPARTMENT\": \"BEVERAGES\",\n    \"CATEGORY\": \"FLAVORED WATER\",\n    \"cancel_qty\": 918\n  },\n  {\n    \"DEPARTMENT\": \"DAIRY\",\n    \"CATEGORY\": \"MILK\",\n    \"cancel_qty\": 580\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Inventory diagnostics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/inventory?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "inventory"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Bucket distribution of on-hand at order date, OOS-feed paradox, stockout rate by store, negative-inventory count."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/inventory?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "inventory"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"oos_paradox\": {\n    \"matched_to_inventory\": 5145,\n    \"positive_at_snapshot\": 4836,\n    \"positive_at_cancel\": 4836\n  },\n  \"bucket_distribution\": [\n    {\n      \"bucket\": \"High (50+)\",\n      \"cancel_qty\": 5403\n    },\n    {\n      \"bucket\": \"Medium (11-50)\",\n      \"cancel_qty\": 3012\n    },\n    {\n      \"bucket\": \"No snapshot\",\n      \"cancel_qty\": 2812\n    },\n    {\n      \"bucket\": \"Low (1-10)\",\n      \"cancel_qty\": 940\n    },\n    {\n      \"bucket\": \"Zero\",\n      \"cancel_qty\": 175\n    },\n    {\n      \"bucket\": \"Negative (data error)\",\n      \"cancel_qty\": 24\n    }\n  ],\n  \"stockout_by_store\": [\n    {\n      \"STORE_NUM\": 1426,\n      \"CITY\": \"Alpine\",\n      \"STATE\": \"IL\",\n      \"REGION\": 8,\n      \"zero_events\": 384,\n      \"total_snapshots\": 14752,\n      \"zero_rate_pct\": 2.6\n    }\n  ],\n  \"zero_stock_by_store\": [\n    {\n      \"STORE_NUM\": 1426,\n      \"CITY\": \"Alpine\",\n      \"STATE\": \"IL\",\n      \"REGION\": 8,\n      \"zero_events\": 384,\n      \"total_snapshots\": 14752,\n      \"zero_rate_pct\": 2.6\n    }\n  ],\n  \"negative_inv_records\": 954,\n  \"_granularity\": \"date\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Data quality scorecard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/data-quality?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "data-quality"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Severity-scored integrity checks across all source tables."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/data-quality?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "data-quality"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"overall_severity\": \"high\",\n  \"_granularity\": \"date\",\n  \"checks\": [\n    {\n      \"name\": \"Cancels with no sub-reason\",\n      \"value\": 4470,\n      \"total\": 8245,\n      \"share_pct\": 54.21,\n      \"severity\": \"high\",\n      \"description\": \"Cancels lacking a sub-reason force coarser root-cause analysis.\"\n    },\n    {\n      \"name\": \"Cancels with no matching inventory snapshot\",\n      \"value\": 1718,\n      \"total\": 8245,\n      \"share_pct\": 20.84,\n      \"severity\": \"medium\",\n      \"description\": \"Cancellations whose order date has no inventory row — limits OOS analysis.\"\n    },\n    {\n      \"name\": \"Negative inventory records\",\n      \"value\": 954,\n      \"total\": 221217,\n      \"share_pct\": 0.43,\n      \"severity\": \"medium\",\n      \"description\": \"Inventory rows with on-hand below zero — should not be physically possible.\"\n    },\n    {\n      \"name\": \"Products missing BRAND\",\n      \"value\": 26,\n      \"total\": 174,\n      \"share_pct\": 14.94,\n      \"severity\": \"medium\",\n      \"description\": \"Catalogue rows lacking BRAND produce labelling gaps in aggregations.\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Derived insights (LLM-refined)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/insights?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "insights"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Code-derived insights with LLM-refined text. Same dict shape as the structured facts, with `_llm_used` flag."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/insights?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "insights"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"top_store\": {\n    \"severity\": \"high\",\n    \"icon\": \"🚨\",\n    \"text\": \"Store 1426 (Alpine, IL) at 9.5% is 1.93× the network average (4.92%). Immediate investigation recommended.\",\n    \"store_num\": 1426,\n    \"rate\": 9.5,\n    \"avg_rate\": 4.92,\n    \"ratio\": 1.93\n  },\n  \"same_day_share\": {\n    \"severity\": \"medium\",\n    \"icon\": \"⏱\",\n    \"text\": \"71% of cancellations happen same-day as the order. This points to demand-side drivers.\",\n    \"share\": 71.3\n  },\n  \"product_concentration\": {\n    \"severity\": \"high\",\n    \"icon\": \"💧\",\n    \"text\": \"NON FLAVORED WATER accounts for ~54% of all cancelled units. Top SKU drove 4,062 cancelled units.\",\n    \"category\": \"NON FLAVORED WATER\",\n    \"category_share\": 53.8,\n    \"top_sku\": \"Purified Drinking Water, 16.9 fl oz, 40 Count\",\n    \"top_sku_qty\": 4062\n  },\n  \"oos_data_quality\": {\n    \"severity\": \"high\",\n    \"icon\": \"🔴\",\n    \"text\": \"OOS Data Quality: 4,836 of 5,145 OOS-flagged cancels (94%) had POSITIVE inventory at order day.\",\n    \"matched\": 5145,\n    \"positive\": 4836,\n    \"share\": 94.0\n  },\n  \"negative_inventory\": {\n    \"severity\": \"high\",\n    \"icon\": \"🚨\",\n    \"text\": \"954 inventory records show negative on-hand quantities — a data-pipeline integrity issue.\",\n    \"neg_records\": 954\n  },\n  \"_llm_used\": true,\n  \"latency_ms\": 1342.5\n}"
+            }
+          ]
+        },
+        {
+          "name": "Ingestion status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/ingestion",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "ingestion"
+              ],
+              "query": []
+            },
+            "description": "Status of the pre-processed parquet files (used by the notebook-driven ingestion path)."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/analytics/ingestion",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "ingestion"
+                  ],
+                  "query": []
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"processed_files_available\": true,\n  \"data_source\": \"parquet\",\n  \"processed_dir\": \"/path/to/data/processed\",\n  \"tables\": {\n    \"orders\": {\n      \"exists\": true,\n      \"size_kb\": 1024.5\n    },\n    \"cancels\": {\n      \"exists\": true,\n      \"size_kb\": 256.2\n    },\n    \"inventory\": {\n      \"exists\": true,\n      \"size_kb\": 4218.7\n    }\n  },\n  \"generated_at\": \"2024-06-24T08:00:00Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AI Insights",
+      "description": "AI-backed surfaces. All fall back to deterministic templates when no API key is configured.",
+      "item": [
+        {
+          "name": "List configured models",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/insights/models",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insights",
+                "models"
+              ],
+              "query": []
+            },
+            "description": "Which AI providers have an API key configured."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/insights/models",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "insights",
+                    "models"
+                  ],
+                  "query": []
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"models\": [\n    {\n      \"id\": \"claude\",\n      \"label\": \"Claude (Anthropic)\",\n      \"configured\": true\n    },\n    {\n      \"id\": \"openai\",\n      \"label\": \"GPT-4o (OpenAI)\",\n      \"configured\": false\n    },\n    {\n      \"id\": \"gemini\",\n      \"label\": \"Gemini 1.5 Pro\",\n      \"configured\": false\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Multi-LLM query (chat)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Which store should we investigate first?\",\n  \"history\": [],\n  \"ai_config\": {\n    \"mode\": \"single\",\n    \"model\": \"claude\",\n    \"models\": [\n      \"claude\"\n    ],\n    \"enable_judge\": false,\n    \"judge_model\": \"claude\"\n  },\n  \"filters\": {}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/insights/query",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insights",
+                "query"
+              ],
+              "query": []
+            },
+            "description": "Send a question to one or more models. Multi-model mode uses asyncio.gather. Enable judge for a synthesised cross-model evaluation."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"question\": \"Which store should we investigate first?\",\n  \"history\": [],\n  \"ai_config\": {\n    \"mode\": \"single\",\n    \"model\": \"claude\",\n    \"models\": [\n      \"claude\"\n    ],\n    \"enable_judge\": false,\n    \"judge_model\": \"claude\"\n  },\n  \"filters\": {}\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/insights/query",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "insights",
+                    "query"
+                  ],
+                  "query": []
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"question\": \"Which store should we investigate first?\",\n  \"mode\": \"single\",\n  \"model_responses\": [\n    {\n      \"model\": \"claude\",\n      \"response\": \"Store 1426 (Alpine, IL) at 9.5% cancel rate is 1.93× the network average. It is the clear first investigation target — both volume and revenue at risk point there.\",\n      \"latency_ms\": 843.2\n    }\n  ],\n  \"judge_result\": null,\n  \"final_answer\": \"Store 1426 (Alpine, IL) at 9.5% cancel rate is 1.93× the network average. It is the clear first investigation target — both volume and revenue at risk point there.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Narrative insights (list)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/insights/narrative?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insights",
+                "narrative"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "LLM-narrated insights in list shape, each with `source_fact` for traceability."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/insights/narrative?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "insights",
+                    "narrative"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"narratives\": [\n    {\n      \"key\": \"top_store\",\n      \"severity\": \"high\",\n      \"icon\": \"🚨\",\n      \"text\": \"Store 1426 (Alpine, IL) is the worst performer at 9.5%, nearly double the 4.92% network average. Operational issues at this site should be the first investigation.\",\n      \"source_fact\": {\n        \"severity\": \"high\",\n        \"rate\": 9.5,\n        \"avg_rate\": 4.92,\n        \"store_num\": 1426\n      }\n    }\n  ],\n  \"llm_used\": true,\n  \"latency_ms\": 1102.4\n}"
+            }
+          ]
+        },
+        {
+          "name": "Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/insights/recommendations?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insights",
+                "recommendations"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Prioritised next actions. Validation discards any rec that doesn't cite a real `supporting_facts` key; falls back to deterministic templates when no key is configured."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/insights/recommendations?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "insights",
+                    "recommendations"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"recommendations\": [\n    {\n      \"id\": \"investigate_store_1426\",\n      \"action\": \"Investigate Store 1426 for operational issues\",\n      \"rationale\": \"This store's cancel rate (9.5%) is 1.93× the network average (4.92%).\",\n      \"expected_impact\": \"Closing the 4.6 percentage-point gap would meaningfully reduce lost revenue at this site.\",\n      \"effort\": \"quick_win\",\n      \"category\": \"operational\",\n      \"severity\": \"high\",\n      \"supporting_facts\": [\n        \"top_store\"\n      ]\n    },\n    {\n      \"id\": \"audit_oos_taxonomy\",\n      \"action\": \"Audit the OOS reason-code taxonomy and inventory-feed timing\",\n      \"rationale\": \"94% of OOS-flagged cancels matched a positive inventory snapshot on the order date.\",\n      \"expected_impact\": \"Restores trust in cancel-reason analyses and unblocks accurate stockout-vs-demand attribution.\",\n      \"effort\": \"medium\",\n      \"category\": \"data-quality\",\n      \"severity\": \"high\",\n      \"supporting_facts\": [\n        \"oos_data_quality\"\n      ]\n    }\n  ],\n  \"_llm_used\": true,\n  \"latency_ms\": 1854.1\n}"
+            }
+          ]
+        },
+        {
+          "name": "Investigation suggestions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/insights/suggestions?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insights",
+                "suggestions"
+              ],
+              "query": [
+                {
+                  "key": "stores",
+                  "value": "",
+                  "description": "Comma-separated store numbers, e.g. 12,61,133",
+                  "disabled": true
+                },
+                {
+                  "key": "regions",
+                  "value": "",
+                  "description": "Comma-separated region values, e.g. 8,9,12",
+                  "disabled": true
+                },
+                {
+                  "key": "date_from",
+                  "value": "",
+                  "description": "Inclusive lower bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "date_to",
+                  "value": "",
+                  "description": "Inclusive upper bound, YYYY-MM-DD",
+                  "disabled": true
+                },
+                {
+                  "key": "reasons",
+                  "value": "",
+                  "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Dynamic, fact-citing investigation prompts for the chat UI. Returns 5-7 questions categorised by investigation mode."
+          },
+          "response": [
+            {
+              "name": "Sample response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/insights/suggestions?",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "insights",
+                    "suggestions"
+                  ],
+                  "query": [
+                    {
+                      "key": "stores",
+                      "value": "",
+                      "description": "Comma-separated store numbers, e.g. 12,61,133",
+                      "disabled": true
+                    },
+                    {
+                      "key": "regions",
+                      "value": "",
+                      "description": "Comma-separated region values, e.g. 8,9,12",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_from",
+                      "value": "",
+                      "description": "Inclusive lower bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "date_to",
+                      "value": "",
+                      "description": "Inclusive upper bound, YYYY-MM-DD",
+                      "disabled": true
+                    },
+                    {
+                      "key": "reasons",
+                      "value": "",
+                      "description": "Pipe-separated reason values, e.g. Out Of Stock|Customer Cancellation",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"questions\": [\n    {\n      \"text\": \"Why is Store 1426 9.5% — is it one category or store-wide?\",\n      \"category\": \"drill_down\",\n      \"supporting_facts\": [\n        \"top_store\"\n      ]\n    },\n    {\n      \"text\": \"Can we trust OOS-flagged cancels when 94% had positive inventory?\",\n      \"category\": \"data_quality\",\n      \"supporting_facts\": [\n        \"oos_data_quality\"\n      ]\n    },\n    {\n      \"text\": \"Is NON FLAVORED WATER a supply problem or a demand problem?\",\n      \"category\": \"cause\",\n      \"supporting_facts\": [\n        \"product_concentration\"\n      ]\n    }\n  ],\n  \"_llm_used\": true,\n  \"latency_ms\": 932.5\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

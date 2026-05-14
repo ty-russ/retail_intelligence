@@ -1,0 +1,188 @@
+{
+  "generated_at": "2026-05-08T21:06:09.133962",
+  "tables": [
+    {
+      "table": "orders",
+      "rows": 59068,
+      "cols": 11,
+      "file": "..\\data\\processed\\orders.parquet",
+      "size_kb": 212.0
+    },
+    {
+      "table": "cancels",
+      "rows": 6673,
+      "cols": 16,
+      "file": "..\\data\\processed\\cancels.parquet",
+      "size_kb": 62.1
+    },
+    {
+      "table": "inventory",
+      "rows": 221217,
+      "cols": 9,
+      "file": "..\\data\\processed\\inventory.parquet",
+      "size_kb": 716.4
+    },
+    {
+      "table": "store",
+      "rows": 15,
+      "cols": 5,
+      "file": "..\\data\\processed\\store.parquet",
+      "size_kb": 3.5
+    },
+    {
+      "table": "product",
+      "rows": 174,
+      "cols": 12,
+      "file": "..\\data\\processed\\product.parquet",
+      "size_kb": 17.2
+    },
+    {
+      "table": "calendar",
+      "rows": 366,
+      "cols": 6,
+      "file": "..\\data\\processed\\calendar.parquet",
+      "size_kb": 7.4
+    },
+    {
+      "table": "enriched_cancels",
+      "rows": 7456,
+      "cols": 28,
+      "file": "..\\data\\processed\\enriched_cancels.parquet",
+      "size_kb": 109.9
+    },
+    {
+      "table": "enriched_orders",
+      "rows": 66700,
+      "cols": 19,
+      "file": "..\\data\\processed\\enriched_orders.parquet",
+      "size_kb": 378.9
+    }
+  ],
+  "quality_report": [
+    {
+      "check": "Table present: ORDERS",
+      "status": "\u2705 PASS",
+      "detail": "59,068 rows"
+    },
+    {
+      "check": "  Required columns: ORDERS",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Table present: CANCELS",
+      "status": "\u2705 PASS",
+      "detail": "7,408 rows"
+    },
+    {
+      "check": "  Required columns: CANCELS",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Table present: INVENTORY",
+      "status": "\u2705 PASS",
+      "detail": "221,217 rows"
+    },
+    {
+      "check": "  Required columns: INVENTORY",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Table present: STORE",
+      "status": "\u2705 PASS",
+      "detail": "15 rows"
+    },
+    {
+      "check": "  Required columns: STORE",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Table present: PRODUCT",
+      "status": "\u2705 PASS",
+      "detail": "174 rows"
+    },
+    {
+      "check": "  Required columns: PRODUCT",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Table present: CALENDAR",
+      "status": "\u2705 PASS",
+      "detail": "366 rows"
+    },
+    {
+      "check": "  Required columns: CALENDAR",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Orders: all store IDs in Store table",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Cancels: all store IDs in Store table",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Orders: all item IDs in Product table",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Cancels: all item IDs in Product table",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Cancel order dates within order date range",
+      "status": "\u274c FAIL",
+      "detail": "Cancels reference orders as early as 2023-12-29 but orders start 2024-02-01"
+    },
+    {
+      "check": "Inventory covers full order period",
+      "status": "\u274c FAIL",
+      "detail": "Inventory ends 2024-06-21, orders go to 2024-06-23"
+    },
+    {
+      "check": "Cancel date >= Order date (no negative lag)",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "Cancel quantities are positive",
+      "status": "\u2705 PASS",
+      "detail": "OK"
+    },
+    {
+      "check": "No negative inventory values",
+      "status": "\u274c FAIL",
+      "detail": "954 negative records (0.4% of inventory)"
+    },
+    {
+      "check": "OOS cancels corroborate zero inventory",
+      "status": "\u274c FAIL",
+      "detail": "96% of OOS-flagged cancels had POSITIVE inventory \u2014 reason code is unreliable"
+    },
+    {
+      "check": "Product names complete",
+      "status": "\u274c FAIL",
+      "detail": "26 products missing name"
+    },
+    {
+      "check": "Product brands complete",
+      "status": "\u274c FAIL",
+      "detail": "26 products missing brand"
+    },
+    {
+      "check": "No inactive products in active catalogue",
+      "status": "\u274c FAIL",
+      "detail": "21 discontinued (D) products remain in catalogue"
+    }
+  ]
+}

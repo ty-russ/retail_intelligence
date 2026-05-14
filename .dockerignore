@@ -1,0 +1,37 @@
+# Don't ship the React client in the HF Spaces image — Streamlit is the demo surface.
+react_client/
+
+# Local dev clutter
+.git/
+.github/
+.venv/
+venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets — visitors paste keys at runtime via BYO-key sidebar
+.env
+.env.local
+.env.*
+
+# Build artefacts
+dist/
+build/
+*.egg-info/
+
+# Documentation that isn't needed at runtime (keep the lean image small)
+DEMO_SCRIPT.md
+PRESENTATION.md
+postman_collection.json
+notebooks/
