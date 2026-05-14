@@ -1,3 +1,18 @@
+```yaml
+---
+title: Order Cancellation Intelligence
+emoji: 📦
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+short_description: Analytical interface over a retail cancellation workbook, with multi-LLM investigation chat
+---
+```
+
+
 # Retail Insight — Order Cancellation Intelligence
 
 An investigative analytics tool that turns a retail cancellation workbook into a navigable, filter-aware experience with five LLM-backed AI surfaces. Built for the AI Applications Analyst presentation brief — the brief explicitly asks for an *analytical interface* over a traditional BI dashboard, with first-class use of AI tools and a clear story for how AI outputs are validated.
